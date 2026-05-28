@@ -1,164 +1,575 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Proteína — Rox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--font-sans);background:var(--color-background-primary);}
-.screen{display:none;padding:1rem;min-height:100vh;}
-.screen.active{display:block;}
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1e1e1e;
+  --border: #2a2a2a;
+  --accent: #e8f04a;
+  --accent2: #4af0a0;
+  --danger: #f04a4a;
+  --warning: #f0a84a;
+  --text: #f0ede8;
+  --muted: #666;
+  --mono: 'Space Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
 
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
-.topbar-title{font-size:20px;font-weight:500;color:var(--color-text-primary);}
-.topbar-icons{display:flex;gap:8px;}
-.btn-icon{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;cursor:pointer;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
-.btn-icon:hover{background:var(--color-background-secondary);}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-.date-selector{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;}
-.date-nav{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;cursor:pointer;color:var(--color-text-secondary);font-size:16px;transition:background 0.2s;}
-.date-nav:hover{background:var(--color-background-secondary);}
-input[type="date"]{flex:1;padding:8px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);}
-input[type="date"]:focus{outline:none;border-color:var(--color-border-secondary);}
-.today-btn{padding:6px 10px;background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary);cursor:pointer;white-space:nowrap;}
-.today-btn:hover{background:var(--color-background-secondary);}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
 
-.progress-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:1.5rem;}
-.progress-label{font-size:13px;color:var(--color-text-secondary);margin-bottom:0.5rem;}
-.progress-bar{width:100%;height:8px;background:var(--color-background-tertiary);border-radius:4px;overflow:hidden;margin-bottom:0.75rem;}
-.progress-fill{height:100%;background:var(--color-background-success);transition:width 0.3s ease;}
-.progress-stats{display:flex;justify-content:space-between;font-size:14px;font-weight:500;}
-.stat-consumed{color:var(--color-text-success);}
-.stat-remaining{color:var(--color-text-secondary);font-size:13px;}
-.stat-exceeded{color:var(--color-text-warning);font-size:13px;}
+/* HEADER */
+.header {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-title {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+}
+.header-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+  font-family: var(--mono);
+}
+.header-icons { display: flex; gap: 8px; }
+.btn-icon {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.btn-icon:active { background: var(--border); }
 
-.section-title{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:0.75rem;}
-.input-row{display:flex;gap:8px;margin-bottom:0.75rem;}
-select{flex:1;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);}
-input[type="number"]{width:80px;padding:10px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);text-align:center;}
-input[type="text"]{flex:1;padding:10px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);}
-select:focus,input:focus{outline:none;border-color:var(--color-border-secondary);}
-.btn-add{padding:10px 14px;background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;font-weight:500;color:var(--color-text-primary);cursor:pointer;transition:background 0.2s;white-space:nowrap;}
-.btn-add:hover{background:var(--color-background-secondary);}
-.btn-add:active{transform:scale(0.98);}
+/* SCREENS */
+.screen { display: none; padding: 16px; }
+.screen.active { display: block; }
 
-.entry-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.entry-name{font-size:14px;font-weight:500;color:var(--color-text-primary);}
-.entry-detail{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
-.entry-protein{font-size:14px;font-weight:500;color:var(--color-text-success);margin-right:12px;}
-.btn-delete{background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:16px;padding:4px;}
-.btn-delete:hover{color:var(--color-text-danger);}
-.empty-state{text-align:center;color:var(--color-text-secondary);font-size:13px;padding:2rem 1rem;}
+/* DATE SELECTOR */
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.date-nav {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 16px;
+  transition: background 0.15s;
+  font-family: var(--mono);
+}
+.date-nav:active { background: var(--border); }
+input[type="date"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--sans);
+}
+input[type="date"]:focus { outline: none; border-color: var(--accent); }
+.today-btn {
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.today-btn:active { background: var(--border); }
 
-.reset-btn{width:100%;padding:12px;margin-top:1rem;background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;color:var(--color-text-secondary);cursor:pointer;transition:background 0.2s;}
-.reset-btn:hover{background:var(--color-background-secondary);}
+/* PROGRESS CARD */
+.progress-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent2);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.stat-consumed {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent2);
+}
+.stat-consumed span { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+.stat-remaining {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.stat-exceeded {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+}
 
-.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--color-text-secondary);font-size:14px;cursor:pointer;padding:0;margin-bottom:1.25rem;}
-.back-btn:hover{color:var(--color-text-primary);}
-.screen-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
-.screen-header-title{font-size:20px;font-weight:500;color:var(--color-text-primary);}
+/* SECTION TITLE */
+.section-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
 
-.config-block{margin-bottom:1.5rem;}
-.config-block h2{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.25rem;}
-.config-block p{font-size:13px;color:var(--color-text-secondary);margin-bottom:0.75rem;}
-.goal-row{display:flex;gap:8px;align-items:center;}
-.goal-unit{font-size:14px;color:var(--color-text-secondary);}
-.divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0;}
+/* INPUTS */
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+select {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--sans);
+}
+input[type="number"] {
+  width: 80px;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--mono);
+  text-align: center;
+}
+input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--sans);
+}
+select:focus, input:focus { outline: none; border-color: var(--accent); }
 
-.food-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
-.food-item.hidden-food{opacity:0.45;}
-.food-name-input{flex:1;font-size:13px;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);}
-.food-prot-input{width:52px;font-size:13px;padding:6px 4px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);text-align:center;}
-.food-unit{font-size:12px;color:var(--color-text-secondary);white-space:nowrap;}
-.btn-vis{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 7px;cursor:pointer;font-size:14px;color:var(--color-text-secondary);transition:all 0.2s;}
-.btn-vis.visible{color:var(--color-text-success);border-color:var(--color-border-secondary);}
-.btn-vis:hover{background:var(--color-background-secondary);}
-.btn-save-food{background:none;border:none;color:var(--color-text-success);cursor:pointer;font-size:16px;padding:4px;}
-.btn-del-food{background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:16px;padding:4px;}
-.btn-del-food:hover{color:var(--color-text-danger);}
+.btn-add {
+  padding: 10px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-add:active { background: var(--border); }
 
-.hist-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 16px;margin-bottom:8px;}
-.hist-date{font-size:14px;font-weight:500;color:var(--color-text-primary);}
-.hist-bar-bg{height:6px;background:var(--color-background-tertiary);border-radius:3px;overflow:hidden;margin:8px 0 4px;}
-.hist-bar-fill{height:100%;border-radius:3px;background:var(--color-background-success);}
-.hist-bar-fill.over{background:var(--color-background-warning);}
-.hist-row{display:flex;justify-content:space-between;align-items:center;}
-.hist-total{font-size:14px;font-weight:500;color:var(--color-text-success);}
-.hist-total.over{color:var(--color-text-warning);}
-.hist-sub{font-size:12px;color:var(--color-text-secondary);}
+/* ENTRY ITEMS */
+.entry-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.entry-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.entry-detail {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.entry-protein {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent2);
+  margin-right: 12px;
+}
+.btn-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  font-family: var(--mono);
+  transition: color 0.15s;
+}
+.btn-delete:active { color: var(--danger); }
 
-.export-btn{display:flex;align-items:center;gap:6px;padding:10px 14px;background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;color:var(--color-text-primary);cursor:pointer;transition:background 0.2s;}
-.export-btn:hover{background:var(--color-background-secondary);}
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 2rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
 
-.save-flash{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--color-background-success);color:#fff;font-size:13px;padding:6px 16px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:99;}
-.save-flash.show{opacity:1;}
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.reset-btn:active { background: var(--surface); }
+
+/* BACK BTN */
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  transition: color 0.15s;
+}
+.back-btn:active { color: var(--text); }
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.screen-header-title {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* CONFIG */
+.config-block { margin-bottom: 24px; }
+.config-block h2 {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.config-block p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.goal-row { display: flex; gap: 8px; align-items: center; }
+.goal-unit { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* FOOD ITEMS */
+.food-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.food-item.hidden-food { opacity: 0.4; }
+.food-name-input {
+  flex: 1;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--sans);
+}
+.food-prot-input {
+  width: 52px;
+  font-size: 13px;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: var(--mono);
+  text-align: center;
+}
+.food-unit { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.btn-vis {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 7px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.btn-vis.visible { color: var(--accent2); border-color: var(--accent2); }
+.btn-save-food {
+  background: none;
+  border: none;
+  color: var(--accent2);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 4px;
+}
+.btn-del-food {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 4px;
+  transition: color 0.15s;
+}
+.btn-del-food:active { color: var(--danger); }
+
+/* HISTORY */
+.hist-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.hist-date { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); }
+.hist-bar-bg {
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+.hist-bar-fill { height: 100%; border-radius: 2px; background: var(--accent2); }
+.hist-bar-fill.over { background: var(--warning); }
+.hist-row { display: flex; justify-content: space-between; align-items: center; }
+.hist-total { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--accent2); }
+.hist-total.over { color: var(--warning); }
+.hist-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+/* EXPORT BTN */
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.export-btn:active { background: var(--border); }
+
+/* SAVE FLASH */
+.save-flash {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent2);
+  color: #0a0a0a;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 99;
+}
+.save-flash.show { opacity: 1; }
+
+/* ADD SECTION WRAPPER */
+.add-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 20px;
+}
 </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">PROTEÍNA — ROX</div>
+    <div class="header-sub">daily tracker</div>
+  </div>
+  <div class="header-icons">
+    <button class="btn-icon" onclick="showHistory()" title="Histórico">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+    </button>
+    <button class="btn-icon" onclick="showConfig()" title="Configuración">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+</div>
 
 <!-- MAIN -->
 <div id="screenMain" class="screen active">
-  <div class="topbar">
-    <div class="topbar-title">Proteína diaria</div>
-    <div class="topbar-icons">
-      <button class="btn-icon" onclick="showHistory()" title="Histórico">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
-      </button>
-      <button class="btn-icon" onclick="showConfig()" title="Configuración">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </button>
-    </div>
-  </div>
-
   <div class="date-selector">
     <button class="date-nav" onclick="changeDate(-1)">‹</button>
     <input type="date" id="dateInput" onchange="onDateChange()">
-    <button class="today-btn" onclick="goToday()">Hoy</button>
+    <button class="today-btn" onclick="goToday()">HOY</button>
     <button class="date-nav" onclick="changeDate(1)">›</button>
   </div>
 
   <div class="progress-card">
-    <div class="progress-label">Progreso hacia tu meta</div>
+    <div class="progress-label">progreso diario</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="progress-stats">
-      <div class="stat-consumed"><span id="consumedProtein">0</span>g consumidos</div>
+      <div>
+        <div class="stat-consumed"><span id="consumedProtein">0</span>g<span>consumidos</span></div>
+      </div>
       <div id="remainingLabel" class="stat-remaining"></div>
     </div>
   </div>
 
-  <div>
+  <div class="add-section">
     <div class="section-title">Agregar proteína</div>
     <div class="input-row"><select id="proteinSelect"></select></div>
     <div class="input-row">
       <input type="number" id="gramsInput" placeholder="g" min="1" max="2000" value="100">
-      <button class="btn-add" onclick="addEntry()">+ Agregar</button>
+      <button class="btn-add" onclick="addEntry()">+ ADD</button>
     </div>
   </div>
 
-  <div style="margin-top:1.5rem;">
+  <div>
     <div class="section-title" id="entriesTitle">Registros del día</div>
-    <div id="entriesList"><div class="empty-state">Sin registros todavía</div></div>
+    <div id="entriesList"><div class="empty-state">sin registros todavía</div></div>
   </div>
-  <button class="reset-btn" onclick="resetDay()">Reiniciar día</button>
+
+  <button class="reset-btn" onclick="resetDay()">reiniciar día</button>
 </div>
 
 <!-- HISTÓRICO -->
 <div id="screenHistory" class="screen">
   <button class="back-btn" onclick="showMain()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    Volver
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    volver
   </button>
   <div class="screen-header">
-    <div class="screen-header-title">Histórico</div>
+    <div class="screen-header-title">HISTÓRICO</div>
     <button class="export-btn" onclick="exportJSON()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Exportar JSON
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      JSON
     </button>
   </div>
-  <div id="historyList"><div class="empty-state">Sin registros aún</div></div>
+  <div id="historyList"><div class="empty-state">sin registros aún</div></div>
 </div>
 
 <!-- CONFIG -->
 <div id="screenConfig" class="screen">
   <button class="back-btn" onclick="showMain()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    Volver
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    volver
   </button>
-  <div style="font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:1.25rem;">Configuración</div>
+  <div class="screen-header-title" style="margin-bottom:20px;">CONFIGURACIÓN</div>
 
   <div class="config-block">
     <h2>Objetivo diario</h2>
@@ -174,10 +585,10 @@ select:focus,input:focus{outline:none;border-color:var(--color-border-secondary)
 
   <div class="config-block">
     <h2>Alimentos</h2>
-    <p>👁 visible en selector · ✓ guardar cambios · ✕ eliminar</p>
+    <p>👁 visible en selector · ✓ guardar · ✕ eliminar</p>
     <div id="foodEditorList"></div>
-    <div style="margin-top:1rem;">
-      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:0.5rem;">Agregar nuevo alimento</p>
+    <div style="margin-top:16px;">
+      <p style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Nuevo alimento</p>
       <div class="input-row">
         <input type="text" id="newFoodName" placeholder="Nombre del alimento">
         <input type="number" id="newFoodProt" placeholder="g" min="0" max="100" style="width:70px;">
@@ -187,7 +598,7 @@ select:focus,input:focus{outline:none;border-color:var(--color-border-secondary)
   </div>
 </div>
 
-<div class="save-flash" id="saveFlash">Guardado ✓</div>
+<div class="save-flash" id="saveFlash">guardado ✓</div>
 
 <script>
 const DEFAULT_FOODS=[
@@ -213,14 +624,8 @@ const DEFAULT_FOODS=[
 function ld(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
 
 function sv(k,val){
-  try{
-    localStorage.setItem(k,JSON.stringify(val));
-    flashSave();
-    return true;
-  }catch(e){
-    console.error('Error guardando',k,e);
-    return false;
-  }
+  try{localStorage.setItem(k,JSON.stringify(val));flashSave();return true;}
+  catch(e){console.error('Error guardando',k,e);return false;}
 }
 
 let saveFlashTimer=null;
@@ -257,11 +662,8 @@ function fmtDateLabel(str){
 function getEntries(date){return allEntries[date]||[];}
 
 function setEntries(date,arr){
-  if(arr.length===0){
-    delete allEntries[date];
-  } else {
-    allEntries[date]=arr;
-  }
+  if(arr.length===0){delete allEntries[date];}
+  else{allEntries[date]=arr;}
   sv('pt_all_entries_v5',allEntries);
 }
 
@@ -278,7 +680,7 @@ function renderEntries(){
   const list=document.getElementById('entriesList');
   const title=document.getElementById('entriesTitle');
   if(!entries.length){
-    list.innerHTML='<div class="empty-state">Sin registros para este día</div>';
+    list.innerHTML='<div class="empty-state">sin registros para este día</div>';
     title.textContent='Registros del día';return;
   }
   title.textContent='Registros del día ('+entries.length+')';
@@ -336,7 +738,7 @@ function addEntry(){
   const f=foods[idx];
   const entries=getEntries(currentDate);
   entries.push({name:f.name,grams,prot:f.prot,protein:(grams/100)*f.prot});
-  setEntries(currentDate,entries); // guarda y flashea
+  setEntries(currentDate,entries);
   sel.value='';document.getElementById('gramsInput').value='100';
   renderEntries();updateProgress();
 }
@@ -344,7 +746,7 @@ function addEntry(){
 function deleteEntry(i){
   const entries=getEntries(currentDate);
   entries.splice(i,1);
-  setEntries(currentDate,entries); // guarda y flashea
+  setEntries(currentDate,entries);
   renderEntries();updateProgress();
 }
 
@@ -358,7 +760,7 @@ function resetDay(){
 function renderHistory(){
   const keys=Object.keys(allEntries).filter(k=>allEntries[k]&&allEntries[k].length>0).sort((a,b)=>b.localeCompare(a));
   const list=document.getElementById('historyList');
-  if(!keys.length){list.innerHTML='<div class="empty-state">Sin registros aún</div>';return;}
+  if(!keys.length){list.innerHTML='<div class="empty-state">sin registros aún</div>';return;}
   list.innerHTML=keys.map(k=>{
     const entries=allEntries[k];
     const total=Math.round(entries.reduce((s,e)=>s+e.protein,0)*10)/10;
@@ -371,7 +773,7 @@ function renderHistory(){
         <div class="hist-total${over?' over':''}">${total}g</div>
       </div>
       <div class="hist-bar-bg"><div class="hist-bar-fill${over?' over':''}" style="width:${Math.round(pct)}%"></div></div>
-      <div class="hist-row" style="margin-top:2px;">
+      <div class="hist-row" style="margin-top:4px;">
         <div class="hist-sub">${items} registro${items!==1?'s':''} · meta ${goal}g</div>
         <div class="hist-sub">${over?'✓ meta alcanzada':''+Math.round((goal-total)*10)/10+'g faltaron'}</div>
       </div>
@@ -382,26 +784,21 @@ function renderHistory(){
 function exportJSON(){
   const keys=Object.keys(allEntries).filter(k=>allEntries[k]&&allEntries[k].length>0).sort((a,b)=>b.localeCompare(a));
   if(!keys.length){alert('No hay datos para exportar');return;}
-
   const exportData={
     exportedAt:new Date().toISOString(),
     goal_g:goal,
     days:keys.map(k=>{
       const entries=allEntries[k];
       const total=Math.round(entries.reduce((s,e)=>s+e.protein,0)*10)/10;
-      return {date:k, total_protein_g:total, entries:entries.map(e=>({name:e.name,grams:e.grams,prot_per_100g:e.prot,protein_g:Math.round(e.protein*10)/10}))};
+      return {date:k,total_protein_g:total,entries:entries.map(e=>({name:e.name,grams:e.grams,prot_per_100g:e.prot,protein_g:Math.round(e.protein*10)/10}))};
     })
   };
-
   const blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;
-  a.download='proteina_historico_'+todayStr()+'.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  a.href=url;a.download='proteina_'+todayStr()+'.json';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
 function renderFoodEditor(){
@@ -479,4 +876,5 @@ function showConfig(){
 document.getElementById('gramsInput').addEventListener('keypress',e=>{if(e.key==='Enter')addEntry();});
 refreshMain();
 </script>
+</body>
 </html>
