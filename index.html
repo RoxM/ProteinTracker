@@ -167,7 +167,7 @@ input[type="date"]:focus { outline: none; border-color: var(--accent); }
   font-family: var(--mono);
   font-size: 22px;
   font-weight: 700;
-  color: var(--accent2);
+  color: var(--accent);
 }
 .stat-consumed span { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; }
 .stat-remaining {
@@ -497,7 +497,7 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
 <!-- HEADER -->
 <div class="header">
   <div>
-    <div class="header-title">PROTEÍNA — ROX</div>
+    <div class="header-title">PROTEIN TRACKER</div>
     <div class="header-sub">daily tracker</div>
   </div>
   <div class="header-icons">
@@ -534,7 +534,7 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
     <div class="section-title">Agregar proteína</div>
     <div class="input-row"><select id="proteinSelect"></select></div>
     <div class="input-row">
-      <input type="number" id="gramsInput" placeholder="g" min="1" max="2000" value="100">
+      <input type="number" id="gramsInput" placeholder="cantidad en g" min="1" max="2000">
       <button class="btn-add" onclick="addEntry()">+ ADD</button>
     </div>
   </div>
@@ -739,7 +739,7 @@ function addEntry(){
   const entries=getEntries(currentDate);
   entries.push({name:f.name,grams,prot:f.prot,protein:(grams/100)*f.prot});
   setEntries(currentDate,entries);
-  sel.value='';document.getElementById('gramsInput').value='100';
+  sel.value='';document.getElementById('gramsInput').value='';
   renderEntries();updateProgress();
 }
 
