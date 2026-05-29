@@ -169,7 +169,7 @@ input[type="date"]:focus { outline: none; border-color: var(--accent); }
   font-weight: 700;
   color: var(--accent);
 }
-.stat-consumed span { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+.stat-consumed .label { font-size: 13px; font-weight: 400; color: var(--accent); margin-left: 4px; }
 .stat-remaining {
   font-family: var(--mono);
   font-size: 11px;
@@ -524,7 +524,7 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="progress-stats">
       <div>
-        <div class="stat-consumed"><span id="consumedProtein">0</span>g<span>consumidos</span></div>
+        <div class="stat-consumed"><span id="consumedProtein">0</span>g <span class="label">consumidos</span></div>
       </div>
       <div id="remainingLabel" class="stat-remaining"></div>
     </div>
