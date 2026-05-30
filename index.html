@@ -602,8 +602,8 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
 
 <script>
 const DEFAULT_FOODS=[
-  {name:"Proteína whey (1 scoop ~30g)",prot:24,visible:true},
-  {name:"Huevo entero cocido",prot:13,visible:true},
+  {name:"Proteína whey (1 scoop ~30g)",prot:24,visible:true,unit:true},
+  {name:"Huevo entero cocido",prot:13,visible:true,unit:true},
   {name:"Pechuga de pollo",prot:31,visible:true},
   {name:"Res magra",prot:26,visible:true},
   {name:"Yogurt sin azúcar",prot:5,visible:true},
@@ -632,7 +632,7 @@ function flashSave(){
   saveFlashTimer=setTimeout(()=>el.classList.remove('show'),1200);
 }
 
-let foods=ld('pt_foods_v6',DEFAULT_FOODS);
+let foods=ld('pt_foods_v7',DEFAULT_FOODS);
 let goal=ld('pt_goal',114);
 let allEntries=ld('pt_all_entries_v5',{});
 let currentDate=todayStr();
@@ -667,7 +667,7 @@ function renderSelect(){
   const sel=document.getElementById('proteinSelect');
   const prev=sel.value;
   sel.innerHTML='<option value="">Selecciona alimento</option>'+
-    foods.map((f,i)=>f.visible!==false?`<option value="${i}">${f.name} — ${f.prot}g/100g</option>`:'').join('');
+    foods.map((f,i)=>f.visible!==false?`<option value="${i}">${f.name} — ${f.prot}g/${f.unit?'unidad':'100g'}</option>`:'').join('');
   sel.value=prev;
 }
 
@@ -684,7 +684,7 @@ function renderEntries(){
     <div class="entry-item">
       <div style="flex:1">
         <div class="entry-name">${e.name}</div>
-        <div class="entry-detail">${e.grams}g · ${e.prot}g prot/100g</div>
+        <div class="entry-detail">${e.unit?e.grams+' unidad'+(e.grams!==1?'es':''):e.grams+'g'} · ${e.prot}g/${e.unit?'unidad':'100g'}</div>
       </div>
       <div class="entry-protein">+${Math.round(e.protein*10)/10}g</div>
       <button class="btn-delete" onclick="deleteEntry(${i})">✕</button>
@@ -730,10 +730,11 @@ function addEntry(){
   const sel=document.getElementById('proteinSelect');
   const grams=parseFloat(document.getElementById('gramsInput').value);
   const idx=parseInt(sel.value);
-  if(isNaN(idx)||!grams||grams<=0){alert('Selecciona un alimento e ingresa gramos válidos');return;}
+  if(isNaN(idx)||!grams||grams<=0){alert('Selecciona un alimento e ingresa una cantidad válida');return;}
   const f=foods[idx];
+  const protein=f.unit?grams*f.prot:(grams/100)*f.prot;
   const entries=getEntries(currentDate);
-  entries.push({name:f.name,grams,prot:f.prot,protein:(grams/100)*f.prot});
+  entries.push({name:f.name,grams,prot:f.prot,protein,unit:f.unit||false});
   setEntries(currentDate,entries);
   sel.value='';document.getElementById('gramsInput').value='';
   renderEntries();updateProgress();
@@ -802,7 +803,7 @@ function renderFoodEditor(){
     <div class="food-item${f.visible===false?' hidden-food':''}">
       <input class="food-name-input" type="text" value="${f.name}" id="fn_${i}">
       <input class="food-prot-input" type="number" value="${f.prot}" id="fp_${i}" min="0" max="100">
-      <span class="food-unit">g/100g</span>
+      <span class="food-unit">${f.unit?'g/unidad':'g/100g'}</span>
       <button class="btn-vis${f.visible===false?'':' visible'}" onclick="toggleVisible(${i})" title="${f.visible===false?'Mostrar':'Ocultar'}">${f.visible===false?'🚫':'👁'}</button>
       <button class="btn-save-food" onclick="saveFood(${i})" title="Guardar">✓</button>
       <button class="btn-del-food" onclick="deleteFood(${i})" title="Eliminar">✕</button>
@@ -811,7 +812,7 @@ function renderFoodEditor(){
 
 function toggleVisible(i){
   foods[i].visible=foods[i].visible===false?true:false;
-  sv('pt_foods_v6',foods);
+  sv('pt_foods_v7',foods);
   renderFoodEditor();renderSelect();
 }
 
@@ -820,14 +821,14 @@ function saveFood(i){
   const prot=parseFloat(document.getElementById('fp_'+i).value);
   if(!name||isNaN(prot))return;
   foods[i]={...foods[i],name,prot};
-  sv('pt_foods_v6',foods);
+  sv('pt_foods_v7',foods);
   renderFoodEditor();renderSelect();
 }
 
 function deleteFood(i){
   if(confirm('¿Eliminar "'+foods[i].name+'"?')){
     foods.splice(i,1);
-    sv('pt_foods_v6',foods);
+    sv('pt_foods_v7',foods);
     renderFoodEditor();renderSelect();
   }
 }
@@ -837,7 +838,7 @@ function addFood(){
   const prot=parseFloat(document.getElementById('newFoodProt').value);
   if(!name||isNaN(prot)||prot<0){alert('Ingresa nombre y proteína válidos');return;}
   foods.push({name,prot,visible:true});
-  sv('pt_foods_v6',foods);
+  sv('pt_foods_v7',foods);
   document.getElementById('newFoodName').value='';
   document.getElementById('newFoodProt').value='';
   renderFoodEditor();renderSelect();
@@ -870,6 +871,11 @@ function showConfig(){
 }
 
 document.getElementById('gramsInput').addEventListener('keypress',e=>{if(e.key==='Enter')addEntry();});
+document.getElementById('proteinSelect').addEventListener('change',function(){
+  const idx=parseInt(this.value);
+  const inp=document.getElementById('gramsInput');
+  inp.placeholder=(!isNaN(idx)&&foods[idx]&&foods[idx].unit)?'cantidad (unidades)':'cantidad en g';
+});
 refreshMain();
 </script>
 </body>
