@@ -20,7 +20,7 @@
   --danger: #f04a4a;
   --warning: #f0a84a;
   --text: #f0ede8;
-  --muted: #666;
+  --muted: #f0ede8;
   --mono: 'Space Mono', monospace;
   --sans: 'DM Sans', sans-serif;
   --radius-sm: 4px;
@@ -315,7 +315,7 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
   gap: 6px;
   background: none;
   border: none;
-  color: var(--muted);
+  color: var(--accent);
   font-family: var(--mono);
   font-size: 12px;
   cursor: pointer;
@@ -602,23 +602,19 @@ select:focus, input:focus { outline: none; border-color: var(--accent); }
 
 <script>
 const DEFAULT_FOODS=[
-  {name:"Clara de huevo cocida",prot:11,visible:true},
-  {name:"Pechuga de pollo",prot:31,visible:true},
-  {name:"Atún en agua",prot:29,visible:true},
-  {name:"Pavo molido magro",prot:29,visible:true},
-  {name:"Camarones cocidos",prot:24,visible:true},
-  {name:"Tilapia al horno",prot:26,visible:true},
-  {name:"Salmón al horno",prot:25,visible:true},
-  {name:"Pierna de pollo",prot:26,visible:true},
-  {name:"Res magra 90%",prot:26,visible:true},
+  {name:"Proteína whey (1 scoop ~30g)",prot:24,visible:true},
   {name:"Huevo entero cocido",prot:13,visible:true},
-  {name:"Yogur griego 0%",prot:10,visible:true},
-  {name:"Queso cottage",prot:11,visible:true},
-  {name:"Tofu firme",prot:8,visible:true},
-  {name:"Edamame cocido",prot:11,visible:true},
-  {name:"Lentejas cocidas",prot:9,visible:true},
+  {name:"Pechuga de pollo",prot:31,visible:true},
+  {name:"Res magra",prot:26,visible:true},
+  {name:"Yogurt sin azúcar",prot:5,visible:true},
+  {name:"Atún en agua",prot:23,visible:true},
+  {name:"Camarones cocidos",prot:24,visible:true},
+  {name:"Tilapia / Salmón",prot:26,visible:true},
+  {name:"Pierna de pollo",prot:26,visible:true},
+  {name:"Pavo molido magro",prot:29,visible:true},
+  {name:"Lentejas",prot:9,visible:true},
   {name:"Frijoles negros",prot:9,visible:true},
-  {name:"Proteína whey (30g scoop)",prot:80,visible:true}
+  {name:"Clara de huevo cocida",prot:11,visible:true}
 ];
 
 function ld(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
@@ -636,7 +632,7 @@ function flashSave(){
   saveFlashTimer=setTimeout(()=>el.classList.remove('show'),1200);
 }
 
-let foods=ld('pt_foods_v5',DEFAULT_FOODS);
+let foods=ld('pt_foods_v6',DEFAULT_FOODS);
 let goal=ld('pt_goal',114);
 let allEntries=ld('pt_all_entries_v5',{});
 let currentDate=todayStr();
@@ -815,7 +811,7 @@ function renderFoodEditor(){
 
 function toggleVisible(i){
   foods[i].visible=foods[i].visible===false?true:false;
-  sv('pt_foods_v5',foods);
+  sv('pt_foods_v6',foods);
   renderFoodEditor();renderSelect();
 }
 
@@ -824,14 +820,14 @@ function saveFood(i){
   const prot=parseFloat(document.getElementById('fp_'+i).value);
   if(!name||isNaN(prot))return;
   foods[i]={...foods[i],name,prot};
-  sv('pt_foods_v5',foods);
+  sv('pt_foods_v6',foods);
   renderFoodEditor();renderSelect();
 }
 
 function deleteFood(i){
   if(confirm('¿Eliminar "'+foods[i].name+'"?')){
     foods.splice(i,1);
-    sv('pt_foods_v5',foods);
+    sv('pt_foods_v6',foods);
     renderFoodEditor();renderSelect();
   }
 }
@@ -841,7 +837,7 @@ function addFood(){
   const prot=parseFloat(document.getElementById('newFoodProt').value);
   if(!name||isNaN(prot)||prot<0){alert('Ingresa nombre y proteína válidos');return;}
   foods.push({name,prot,visible:true});
-  sv('pt_foods_v5',foods);
+  sv('pt_foods_v6',foods);
   document.getElementById('newFoodName').value='';
   document.getElementById('newFoodProt').value='';
   renderFoodEditor();renderSelect();
